@@ -1,13 +1,14 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1998, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
 *	All Rights Reserved.
 *
 ****/
-#if !defined(__TF_DEFS_H)
+
+#ifndef __TF_DEFS_H
 #define __TF_DEFS_H
 
 //===========================================================================
@@ -45,7 +46,7 @@
 // Debug Options
 //#define MAP_DEBUG                     // Debug for Map code. I suggest running in a hi-res
 										// mode and/or piping the output from the server to a file.
-#if MAP_DEBUG
+#ifdef MAP_DEBUG
 	#define MDEBUG(x) x
 #else
 	#define MDEBUG(x)
@@ -175,8 +176,6 @@
 								// be chosen by players, only enforced by maps
 #define PC_LASTCLASS	12 		// Use this as the high-boundary for any loops
 								// through the playerclass.
-
-#define SENTRY_COLOR	10		// will be in the PC_RANDOM slot for team colors
 
 // These are just for the scanner
 #define SCAN_SENTRY		13
@@ -361,6 +360,15 @@ enum
 // Silent Spy Feign
 #define TF_SPY_SILENTDIE		199
 
+
+/*==================================================*/
+/*	Colors											*/
+/*==================================================*/
+#define TEAM1_COLOR		150
+#define TEAM2_COLOR		250
+#define TEAM3_COLOR		45
+#define TEAM4_COLOR		100
+
 /*==================================================*/
 /* Defines for the ENGINEER's Building ability		*/
 /*==================================================*/
@@ -456,28 +464,28 @@ enum
 
 // HL-compatible weapon numbers
 #define WEAPON_HOOK				1
-#define WEAPON_BIOWEAPON		(WEAPON_HOOK + 1)
-#define WEAPON_MEDIKIT			(WEAPON_HOOK + 2)
-#define WEAPON_SPANNER			(WEAPON_HOOK + 3)
-#define WEAPON_AXE			(WEAPON_HOOK + 4)
-#define WEAPON_SNIPER_RIFLE		(WEAPON_HOOK + 5)
-#define WEAPON_AUTO_RIFLE		(WEAPON_HOOK + 6)
-#define WEAPON_TF_SHOTGUN		(WEAPON_HOOK + 7)
-#define WEAPON_SUPER_SHOTGUN		(WEAPON_HOOK + 8)
-#define WEAPON_NAILGUN			(WEAPON_HOOK + 9)
-#define WEAPON_SUPER_NAILGUN		(WEAPON_HOOK + 10)
-#define WEAPON_GRENADE_LAUNCHER		(WEAPON_HOOK + 11)
-#define WEAPON_FLAMETHROWER		(WEAPON_HOOK + 12)
-#define WEAPON_ROCKET_LAUNCHER		(WEAPON_HOOK + 13)
-#define WEAPON_INCENDIARY		(WEAPON_HOOK + 14)
-#define WEAPON_ASSAULT_CANNON		(WEAPON_HOOK + 16)
-#define WEAPON_LIGHTNING		(WEAPON_HOOK + 17)
-#define WEAPON_DETPACK			(WEAPON_HOOK + 18)
-#define WEAPON_TRANQ			(WEAPON_HOOK + 19)
-#define WEAPON_LASER			(WEAPON_HOOK + 20)
-#define WEAPON_PIPEBOMB_LAUNCHER 	(WEAPON_HOOK + 21)
-#define WEAPON_KNIFE			(WEAPON_HOOK + 22)
-#define WEAPON_BENCHMARK		(WEAPON_HOOK + 23)
+#define WEAPON_BIOWEAPON		(WEAPON_HOOK+1)
+#define WEAPON_MEDIKIT			(WEAPON_HOOK+2)
+#define WEAPON_SPANNER			(WEAPON_HOOK+3)
+#define WEAPON_AXE				(WEAPON_HOOK+4)
+#define WEAPON_SNIPER_RIFLE		(WEAPON_HOOK+5)
+#define WEAPON_AUTO_RIFLE		(WEAPON_HOOK+6)
+#define WEAPON_TF_SHOTGUN		(WEAPON_HOOK+7)
+#define WEAPON_SUPER_SHOTGUN	(WEAPON_HOOK+8)
+#define WEAPON_NAILGUN			(WEAPON_HOOK+9)
+#define WEAPON_SUPER_NAILGUN	(WEAPON_HOOK+10)
+#define WEAPON_GRENADE_LAUNCHER	(WEAPON_HOOK+11)
+#define WEAPON_FLAMETHROWER		(WEAPON_HOOK+12)
+#define WEAPON_ROCKET_LAUNCHER	(WEAPON_HOOK+13)
+#define WEAPON_INCENDIARY		(WEAPON_HOOK+14)
+#define WEAPON_ASSAULT_CANNON	(WEAPON_HOOK+16)
+#define WEAPON_LIGHTNING		(WEAPON_HOOK+17)
+#define WEAPON_DETPACK			(WEAPON_HOOK+18)
+#define WEAPON_TRANQ			(WEAPON_HOOK+19)
+#define WEAPON_LASER			(WEAPON_HOOK+20)
+#define WEAPON_PIPEBOMB_LAUNCHER (WEAPON_HOOK+21)
+#define WEAPON_KNIFE			(WEAPON_HOOK+22)
+#define WEAPON_BENCHMARK		(WEAPON_HOOK+23)
 
 /*==================================================*/
 /* New Weapon Related Defines		                */
@@ -507,7 +515,7 @@ enum
 // Detpack
 #define WEAP_DETPACK_DISARMTIME		3   	// Time it takes to disarm a Detpack
 #define WEAP_DETPACK_SETTIME		3   	// Time it takes to set a Detpack
-#define WEAP_DETPACK_SIZE		700	// Explosion Size
+#define WEAP_DETPACK_SIZE			700	 	// Explosion Size
 #define WEAP_DETPACK_GOAL_SIZE		1500 	// Explosion Size for goal triggering
 #define WEAP_DETPACK_BITS_NO		12  	// Bits that detpack explodes into
 
@@ -517,15 +525,15 @@ enum
 // Grenades
 #define GR_PRIMETIME		3
 #define GR_CALTROP_PRIME	0.5
-#define GR_TYPE_NONE		0
-#define GR_TYPE_NORMAL		1
-#define GR_TYPE_CONCUSSION	2
-#define GR_TYPE_NAIL		3
-#define GR_TYPE_MIRV		4
-#define GR_TYPE_NAPALM		5
-//#define GR_TYPE_FLARE		6
-#define GR_TYPE_GAS		7
-#define GR_TYPE_EMP		8
+#define GR_TYPE_NONE		0 
+#define GR_TYPE_NORMAL		1 
+#define GR_TYPE_CONCUSSION	2 
+#define GR_TYPE_NAIL		3 
+#define GR_TYPE_MIRV		4 
+#define GR_TYPE_NAPALM		5 
+//#define GR_TYPE_FLARE		6 
+#define GR_TYPE_GAS			7
+#define GR_TYPE_EMP			8
 #define GR_TYPE_CALTROP		9
 //#define GR_TYPE_FLASH		10
 
@@ -540,8 +548,8 @@ enum
 // Defines for Concussion Grenade
 #define GR_CONCUSS_TIME		0.25 
 #define GR_CONCUSS_DEC		10
-#define MEDIUM_PING		150
-#define HIGH_PING		200
+#define MEDIUM_PING			150
+#define HIGH_PING			200
 
 // Defines for the Gas Grenade
 #define GR_HALLU_TIME		0.3
@@ -549,7 +557,7 @@ enum
 #define GR_HALLU_DEC		2.5
 
 // Defines for the BioInfection
-#define BIO_JUMP_RADIUS		128	// The distance the bioinfection can jump between players
+#define BIO_JUMP_RADIUS 128		// The distance the bioinfection can jump between players
 
 /*==================================================*/
 /* New Items			                        	*/
@@ -668,7 +676,7 @@ enum
 #define PC_SOLDIER_INITAMMO_ROCKET	10 
 #define PC_SOLDIER_GRENADE_TYPE_1	GR_TYPE_NORMAL
 #define PC_SOLDIER_GRENADE_TYPE_2	GR_TYPE_NAIL
-#define PC_SOLDIER_GRENADE_INIT_1	2
+#define PC_SOLDIER_GRENADE_INIT_1	4 	 
 #define PC_SOLDIER_GRENADE_INIT_2	1 	 
 #define PC_SOLDIER_TF_ITEMS			0 
 
@@ -703,8 +711,8 @@ enum
 #define PC_DEMOMAN_INITAMMO_DETPACK	1 
 #define PC_DEMOMAN_GRENADE_TYPE_1	GR_TYPE_NORMAL
 #define PC_DEMOMAN_GRENADE_TYPE_2	GR_TYPE_MIRV
-#define PC_DEMOMAN_GRENADE_INIT_1	2
-#define PC_DEMOMAN_GRENADE_INIT_2	2 	 
+#define PC_DEMOMAN_GRENADE_INIT_1	4 	 
+#define PC_DEMOMAN_GRENADE_INIT_2	4 	 
 #define PC_DEMOMAN_TF_ITEMS			0 
 
 // Class Details for COMBAT MEDIC
@@ -731,7 +739,7 @@ enum
 #define PC_MEDIC_INITAMMO_MEDIKIT	50 
 #define PC_MEDIC_GRENADE_TYPE_1		GR_TYPE_NORMAL
 #define PC_MEDIC_GRENADE_TYPE_2		GR_TYPE_CONCUSSION
-#define PC_MEDIC_GRENADE_INIT_1		2
+#define PC_MEDIC_GRENADE_INIT_1		3 	 
 #define PC_MEDIC_GRENADE_INIT_2		2 	 
 #define PC_MEDIC_TF_ITEMS			0 
 #define PC_MEDIC_REGEN_TIME			3   // Number of seconds between each regen.
@@ -759,7 +767,7 @@ enum
 #define PC_HVYWEAP_INITAMMO_ROCKET	0 
 #define PC_HVYWEAP_GRENADE_TYPE_1	GR_TYPE_NORMAL
 #define PC_HVYWEAP_GRENADE_TYPE_2	GR_TYPE_MIRV
-#define PC_HVYWEAP_GRENADE_INIT_1	2
+#define PC_HVYWEAP_GRENADE_INIT_1	4 	 
 #define PC_HVYWEAP_GRENADE_INIT_2	1 	 
 #define PC_HVYWEAP_TF_ITEMS			0 
 #define PC_HVYWEAP_CELL_USAGE		7	// Amount of cells spent to power up assault cannon
@@ -788,7 +796,7 @@ enum
 #define PC_PYRO_INITAMMO_ROCKET	5 
 #define PC_PYRO_GRENADE_TYPE_1	GR_TYPE_NORMAL
 #define PC_PYRO_GRENADE_TYPE_2	GR_TYPE_NAPALM
-#define PC_PYRO_GRENADE_INIT_1	2
+#define PC_PYRO_GRENADE_INIT_1	1 	 
 #define PC_PYRO_GRENADE_INIT_2	4 	 
 #define PC_PYRO_TF_ITEMS		0
 #define PC_PYRO_ROCKET_USAGE	3	// Number of rockets per incendiary cannon shot
@@ -972,7 +980,7 @@ enum
 /*==========================================================================*/
 /* Flamethrower																*/
 /*==========================================================================*/
-#define FLAME_PLYRMAXTIME	5.0 // lifetime in seconds of a flame on a player
+#define FLAME_PLYRMAXTIME	4.5 // lifetime in seconds of a flame on a player
 #define FLAME_MAXBURNTIME	8  	// lifetime in seconds of a flame on the world (big ones)
 #define NAPALM_MAXBURNTIME	20 	// lifetime in seconds of flame from a napalm grenade
 #define FLAME_MAXPLYRFLAMES	4 	// maximum number of flames on a player
@@ -982,7 +990,6 @@ enum
 #define FLAME_DAMAGE_TIME	1	// Interval between damage burns from flames
 #define FLAME_EFFECT_TIME	0.2	// frequency at which we display flame effects.
 #define FLAME_THINK_TIME	0.1	// Seconds between times the flame checks burn
-#define PER_FLAME_DAMAGE	2	// Damage taken per second per flame by burning players
 
 /*==================================================*/
 /* CTF Support defines 								*/
@@ -1106,8 +1113,11 @@ float already_chosen_map;
 #define MENU_CLASSHELP				6
 #define MENU_CLASSHELP2 			7
 #define MENU_REPEATHELP 			8
-
-#define MENU_SPECHELP				9
+#define MENU_ORDIMENU				9	//modif de Julien
+#define MENU_ORDICONTROL			10	//modif de Julien
+#define MENU_KEYPAD					11	//modif de Julien
+#define MENU_SOIN					12	//modif de Julien
+#define MENU_RADIO					13	//modif de Julien
 
 
 #define MENU_SPY					12
@@ -1122,8 +1132,6 @@ float already_chosen_map;
 #define MENU_TEAM_CHANGE			21
 
 #define MENU_REFRESH_RATE 			25
-
-#define MENU_VOICETWEAK				50
 
 //============================
 // Timer Types
@@ -1141,12 +1149,10 @@ float already_chosen_map;
 #define TF_TIMER_BUILD				11
 #define TF_TIMER_CHECKBUILDDISTANCE 12
 #define TF_TIMER_DISGUISE			13
-#define TF_TIMER_DISPENSERREFILL	14
 
 // Non Player timers
 #define TF_TIMER_RETURNITEM			100
 #define TF_TIMER_DELAYEDGOAL		101
-#define TF_TIMER_ENDROUND			102
 
 //============================
 // Teamscore printing
@@ -1154,15 +1160,7 @@ float already_chosen_map;
 #define TS_PRINT_LONG				2
 #define TS_PRINT_LONG_TO_ALL		3
 
-#if !defined(TF_DEFS_ONLY)
-
-typedef struct
-{
-	int topColor;
-	int bottomColor;
-} team_color_t;
-
-
+#ifndef TF_DEFS_ONLY
 /*==================================================*/
 /* GLOBAL VARIABLES									*/
 /*==================================================*/
@@ -1171,9 +1169,7 @@ extern float number_of_teams;	// number of teams supported by the map
 extern int   illegalclasses[5];	// Illegal playerclasses for all teams
 extern int   civilianteams;		// Bitfield holding Civilian teams
 extern Vector  rgbcolors[5];		 // RGB colors for each of the 4 teams
-
-extern team_color_t teamcolors[5][PC_LASTCLASS]; // Colors for each of the 4 teams
-
+extern int   teamcolors[5];		// Colours for each of the 4 teams
 extern int   teamscores[5];		// Goal Score of each team
 extern int	 g_iOrderedTeams[5]; // Teams ordered into order of winners->losers
 extern int	 teamfrags[5];		// Total Frags for each team
@@ -1202,7 +1198,6 @@ extern float old_grens;
 extern float flagem_checked;
 extern float flNextEqualisationCalc;
 extern BOOL  cease_fire;
-extern BOOL  no_cease_fire_text;
 extern BOOL  initial_cease_fire;
 extern BOOL  last_cease_fire;
 // Autokick stuff
@@ -1213,8 +1208,7 @@ extern float deathmsg;		// Global, which is set before every T_Damage, to indica
 
 extern char *sTeamSpawnNames[];
 extern char *sClassNames[];
-extern char *sNewClassModelFiles[];
-extern char *sOldClassModelFiles[];
+extern char *sClassModelFiles[];
 extern char *sClassModels[];
 extern char *sClassCfgs[];
 extern char *sGrenadeNames[];
@@ -1294,7 +1288,6 @@ extern cvar_t	tfc_spam_limit; // at this many points, gag the spammer
 extern cvar_t	tfc_clanbattle, tfc_clanbattle_prematch, tfc_prematch, tfc_clanbattle_ceasefire, tfc_balance_teams, tfc_balance_scores;
 extern cvar_t   tfc_clanbattle_locked, tfc_birthday, tfc_autokick_kills, tfc_fragscoring, tfc_autokick_time, tfc_adminpwd;
 extern cvar_t	weaponstay, footsteps, flashlight, aimcrosshair, falldamage, teamplay;
-extern cvar_t	allow_spectators;
 
 /*==========================================================================*/
 class CTFFlame : public CBaseMonster
@@ -1345,11 +1338,7 @@ class CTFSpawn : public CBaseEntity
 {
 public:
 	void	Spawn( void );
-	void	Activate( void );
 	int		Classify ( void ) { return	CLASS_TFSPAWN; }
-	BOOL	CheckTeam( int iTeamNo );
-
-	EHANDLE m_pTeamCheck;
 };
 
 class CTFDetect : public CBaseEntity
@@ -1366,19 +1355,7 @@ public:
 	void		EXPORT	DeathTouch( CBaseEntity *pOther );
 };
 
-class CTeamCheck : public CBaseDelay
-{
-public:
-	void Spawn( void );
-	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-	BOOL TeamMatches( int iTeam );
-};
-
-class CTeamSet : public CBaseDelay
-{
-public:
-	void Spawn( void );
-	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-};
 #endif // TF_DEFS_ONLY
 #endif // __TF_DEFS_H
+
+

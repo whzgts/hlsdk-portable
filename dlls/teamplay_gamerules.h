@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -15,11 +15,8 @@
 //
 // teamplay_gamerules.h
 //
-#pragma once
-#if !defined(TEAMPLAY_GAMERULES_H)
-#define TEAMPLAY_GAMERULES_H
 
-#define MAX_TEAMNAME_LENGTH		16
+#define MAX_TEAMNAME_LENGTH	16
 #define MAX_TEAMS			32
 
 #define TEAMPLAY_TEAMLISTLENGTH		MAX_TEAMS*MAX_TEAMNAME_LENGTH
@@ -42,7 +39,7 @@ public:
 	virtual const char *GetGameDescription( void ) { return "HL Teamplay"; }  // this is the game name that gets seen in the server browser
 	virtual void UpdateGameMode( CBasePlayer *pPlayer );  // the client needs to be informed of the current game mode
 	virtual void PlayerKilled( CBasePlayer *pVictim, entvars_t *pKiller, entvars_t *pInflictor );
-	virtual void Think( void );
+	virtual void Think ( void );
 	virtual int GetTeamIndex( const char *pTeamName );
 	virtual const char *GetIndexedTeamName( int teamIndex );
 	virtual BOOL IsValidTeam( const char *pTeamName );
@@ -50,7 +47,7 @@ public:
 	virtual void ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTeamName, BOOL bKill, BOOL bGib );
 
 private:
-	void RecountTeams( bool bResendInfo = FALSE );
+	void RecountTeams( void );
 	const char *TeamWithFewestPlayers( void );
 
 	BOOL m_DisableDeathMessages;
@@ -58,4 +55,3 @@ private:
 	BOOL m_teamLimit;				// This means the server set only some teams as valid
 	char m_szTeamList[TEAMPLAY_TEAMLISTLENGTH];
 };
-#endif // TEAMPLAY_GAMERULES_H

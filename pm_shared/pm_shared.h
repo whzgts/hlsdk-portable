@@ -26,6 +26,14 @@ char PM_FindTextureType( char *name );
 #define OBS_CHASE_LOCKED		1
 #define OBS_CHASE_FREE			2
 #define OBS_ROAMING			3		
+#ifndef SPEC_IS_SPECTATOR
+#define SPEC_IS_SPECTATOR	(1<<0)
+#define SPEC_SMOOTH_ANGLES	(1<<1)
+#define SPEC_SMOOTH_ORIGIN	(1<<2)
+#endif
+#ifndef OBS_DIRECTED
+#define OBS_DIRECTED		4	// HL Invasion (old SDK 2.1 value, used by hud_spectator.cpp)
+#endif
 #define OBS_IN_EYE			4
 #define OBS_MAP_FREE			5
 #define OBS_MAP_CHASE			6

@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -15,7 +15,6 @@
 //
 // status_icons.cpp
 //
-
 #include "hud.h"
 #include "cl_util.h"
 #include "const.h"
@@ -26,7 +25,7 @@
 #include "parsemsg.h"
 #include "event_api.h"
 
-DECLARE_MESSAGE( m_StatusIcons, StatusIcon )
+DECLARE_MESSAGE( m_StatusIcons, StatusIcon );
 
 int CHudStatusIcons::Init( void )
 {
@@ -41,6 +40,7 @@ int CHudStatusIcons::Init( void )
 
 int CHudStatusIcons::VidInit( void )
 {
+
 	return 1;
 }
 
@@ -53,24 +53,22 @@ void CHudStatusIcons::Reset( void )
 // Draw status icons along the left-hand side of the screen
 int CHudStatusIcons::Draw( float flTime )
 {
-	if( gEngfuncs.IsSpectateOnly() )
-		return 1;
 	// find starting position to draw from, along right-hand side of screen
 	int x = 5;
 	int y = ScreenHeight / 2;
 	
 	// loop through icon list, and draw any valid icons drawing up from the middle of screen
-	for( int i = 0; i < MAX_ICONSPRITES; i++ )
+	for ( int i = 0; i < MAX_ICONSPRITES; i++ )
 	{
-		if( m_IconList[i].spr )
+		if ( m_IconList[i].spr )
 		{
 			y -= ( m_IconList[i].rc.bottom - m_IconList[i].rc.top ) + 5;
-
+			
 			SPR_Set( m_IconList[i].spr, m_IconList[i].r, m_IconList[i].g, m_IconList[i].b );
 			SPR_DrawAdditive( 0, x, y, &m_IconList[i].rc );
 		}
 	}
-
+	
 	return 1;
 }
 
@@ -87,7 +85,7 @@ int CHudStatusIcons::MsgFunc_StatusIcon( const char *pszName, int iSize, void *p
 
 	int ShouldEnable = READ_BYTE();
 	char *pszIconName = READ_STRING();
-	if( ShouldEnable )
+	if ( ShouldEnable )
 	{
 		int r = READ_BYTE();
 		int g = READ_BYTE();
@@ -104,29 +102,28 @@ int CHudStatusIcons::MsgFunc_StatusIcon( const char *pszName, int iSize, void *p
 }
 
 // add the icon to the icon list, and set it's drawing color
-void CHudStatusIcons::EnableIcon( const char *pszIconName, unsigned char red, unsigned char green, unsigned char blue )
+void CHudStatusIcons::EnableIcon( char *pszIconName, unsigned char red, unsigned char green, unsigned char blue )
 {
-	int i;
-
 	// check to see if the sprite is in the current list
-	for( i = 0; i < MAX_ICONSPRITES; i++ )
+	int i;
+	for ( i = 0; i < MAX_ICONSPRITES; i++ )
 	{
-		if( !stricmp( m_IconList[i].szSpriteName, pszIconName ) )
+		if ( !stricmp( m_IconList[i].szSpriteName, pszIconName ) )
 			break;
 	}
 
-	if( i == MAX_ICONSPRITES )
+	if ( i == MAX_ICONSPRITES )
 	{
 		// icon not in list, so find an empty slot to add to
-		for( i = 0; i < MAX_ICONSPRITES; i++ )
+		for ( i = 0; i < MAX_ICONSPRITES; i++ )
 		{
-			if( !m_IconList[i].spr )
+			if ( !m_IconList[i].spr )
 				break;
 		}
 	}
 
 	// if we've run out of space in the list, overwrite the first icon
-	if( i == MAX_ICONSPRITES )
+	if ( i == MAX_ICONSPRITES )
 	{
 		i = 0;
 	}
@@ -142,22 +139,22 @@ void CHudStatusIcons::EnableIcon( const char *pszIconName, unsigned char red, un
 	strcpy( m_IconList[i].szSpriteName, pszIconName );
 
 	// Hack: Play Timer sound when a grenade icon is played (in 0.8 seconds)
-	if( strstr(m_IconList[i].szSpriteName, "grenade") )
+	if ( strstr(m_IconList[i].szSpriteName, "grenade") )
 	{
 		cl_entity_t *pthisplayer = gEngfuncs.GetLocalPlayer();
 		gEngfuncs.pEventAPI->EV_PlaySound( pthisplayer->index, pthisplayer->origin, CHAN_STATIC, "weapons/timer.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
 	}
 }
 
-void CHudStatusIcons::DisableIcon( const char *pszIconName )
+void CHudStatusIcons::DisableIcon( char *pszIconName )
 {
 	// find the sprite is in the current list
-	for( int i = 0; i < MAX_ICONSPRITES; i++ )
+	for ( int i = 0; i < MAX_ICONSPRITES; i++ )
 	{
-		if( !stricmp( m_IconList[i].szSpriteName, pszIconName ) )
+		if ( !stricmp( m_IconList[i].szSpriteName, pszIconName ) )
 		{
 			// clear the item from the list
-			memset( &m_IconList[i], 0, sizeof(icon_sprite_t) );
+			memset( &m_IconList[i], 0, sizeof( icon_sprite_t ) );
 			return;
 		}
 	}

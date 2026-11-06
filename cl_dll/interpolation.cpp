@@ -17,6 +17,8 @@
 #include "cl_util.h"
 #include "interpolation.h"
 
+extern "C" void NormalizeAngles( float *angles );
+
 // = determinant of matrix a,b,c
 #define Determinant( a, b, c )		( (a)[2] * ( (b)[0]*(c)[1] - (b)[1]*(c)[0] ) + \
 								(a)[1] * ( (b)[2]*(c)[0] - (b)[0]*(c)[2] ) + \

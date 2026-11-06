@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -12,46 +12,35 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#if !defined(GAME_H)
+
+#ifndef GAME_H
 #define GAME_H
 
 extern void GameDLLInit( void );
 
-extern cvar_t displaysoundlist;
+
+extern cvar_t	displaysoundlist;
+extern cvar_t	mapcyclefile;
+extern cvar_t	servercfgfile;
+extern cvar_t	lservercfgfile;
 
 // multiplayer server rules
-extern cvar_t teamplay;
-extern cvar_t fraglimit;
-extern cvar_t timelimit;
-extern cvar_t friendlyfire;
-extern cvar_t falldamage;
-extern cvar_t weaponstay;
-extern cvar_t selfgauss;
-extern cvar_t chargerfix;
-extern cvar_t satchelfix;
-extern cvar_t explosionfix;
-extern cvar_t monsteryawspeedfix;
-extern cvar_t corpsephysics;
-extern cvar_t pushablemode;
-extern cvar_t forcerespawn;
-extern cvar_t flashlight;
-extern cvar_t aimcrosshair;
-extern cvar_t decalfrequency;
-extern cvar_t teamlist;
-extern cvar_t teamoverride;
-extern cvar_t defaultteam;
-extern cvar_t allowmonsters;
-extern cvar_t bhopcap;
-extern cvar_t sv_pushable_fixed_tick_fudge;
-extern cvar_t sv_busters;
+extern cvar_t	fraglimit;
+extern cvar_t	timelimit;
+extern cvar_t	friendlyfir;
+extern cvar_t	falldamage;
+extern cvar_t	weaponstay;
+extern cvar_t	forcerespaw;
+extern cvar_t	flashlight;
+extern cvar_t	aimcrosshair;
+extern cvar_t	decalfrequency;
+extern cvar_t	teamlist;
+extern cvar_t	teamoverride;
+extern cvar_t	defaultteam;
 
 // Engine Cvars
-extern cvar_t *g_psv_gravity;
-extern cvar_t *g_psv_aim;
-extern cvar_t *g_psv_allow_autoaim;
-extern cvar_t *g_footsteps;
-extern cvar_t *g_enable_cheats;
+extern cvar_t	*g_psv_gravity;
+extern cvar_t	*g_psv_aim;
+extern cvar_t	*g_footsteps;
 
-extern cvar_t *g_psv_developer;
-#endif // GAME_H
+#endif		// GAME_H

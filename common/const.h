@@ -784,3 +784,11 @@ typedef struct
 } trace_t;
 
 #endif//CONST_H
+
+// --- HL Invasion additions (shared by client and server) ---
+#ifndef ELECTRO_DISK_SPEED
+#define ELECTRO_DISK_SPEED	512
+#endif
+#ifndef ELECTRO_DISK_MAX
+#define ELECTRO_DISK_MAX	300
+#endif

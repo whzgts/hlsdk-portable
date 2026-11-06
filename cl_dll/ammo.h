@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -12,11 +12,12 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#if !defined(__AMMO_H__)
+
+#ifndef __AMMO_H__
 #define __AMMO_H__
 
 #define MAX_WEAPON_NAME 128
+
 
 #define WEAPON_FLAGS_SELECTONEMPTY	1
 
@@ -56,4 +57,6 @@ struct WEAPON
 };
 
 typedef int AMMO;
+
+
 #endif

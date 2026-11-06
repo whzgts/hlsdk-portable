@@ -39,6 +39,7 @@ extern "C"
 }
 
 extern int g_iAlive;
+int g_iVisibleMouse = 0;
 
 extern int g_weaponselect;
 extern cl_enginefunc_t gEngfuncs;
@@ -649,12 +650,10 @@ void IN_Impulse( void )
 void IN_ScoreDown( void )
 {
 	KeyDown( &in_score );
-	if ( gHUD.UseVguiScoreBoard() && gViewPort )
+	if ( gViewPort )
 	{
 		gViewPort->ShowScoreBoard();
-		return;
 	}
-	gHUD.m_Scoreboard.UserCmd_ShowScores();
 }
 
 void IN_ScoreUp( void )
@@ -664,13 +663,71 @@ void IN_ScoreUp( void )
 	{
 		gViewPort->HideScoreBoard();
 	}
-	gHUD.m_Scoreboard.UserCmd_HideScores();
 }
 
 void IN_MLookUp( void )
 {
 	KeyUp( &in_mlook );
 }
+// modif de Julien
+
+void IN_BatteryDown ( void )
+{}
+
+void IN_BatteryUp ( void )
+{
+	if ( gHUD.m_flTimeDelta > 0 )
+		gEngfuncs.pfnClientCmd("battery" );
+}
+
+
+void IN_MedkitDown ( void )
+{}
+
+void IN_MedkitUp ( void )
+{
+	if ( gHUD.m_flTimeDelta > 0 )
+		gEngfuncs.pfnClientCmd("medkit" );
+}
+
+
+// modif de julien
+
+void IN_SoinDown ( void )
+{
+	if ( gViewPort && gViewPort->m_pCurrentMenu && gViewPort->m_pCurrentMenu->GetMenuID() == MENU_RADIO )
+	{
+		gViewPort->m_pCurrentMenu->Close ();
+
+	}
+	if ( gViewPort && gHUD.m_iWeaponBits & (1<<(WEAPON_SUIT)) )
+	{
+		CMenuPanel *pNewMenu = NULL;
+
+		pNewMenu = gViewPort->OpenSoinMenu();
+
+		gViewPort->HideCommandMenu();
+
+		pNewMenu->SetMenuID( MENU_SOIN );
+		pNewMenu->SetActive( true );
+
+		gViewPort->m_pCurrentMenu = pNewMenu;
+		gViewPort->m_pCurrentMenu->Open();
+		gViewPort->UpdateCursorState();	
+
+	}
+
+}
+void IN_SoinUp ( void )
+{
+	if ( gViewPort )
+	{
+		gViewPort->HideTopMenu();
+	}
+}
+
+
+
 
 /*
 ===============
@@ -862,10 +919,6 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	//
 	cmd->buttons = CL_ButtonBits( 1 );
 
-	// If they're in a modal dialog, ignore the attack button.
-	if(GetClientVoiceMgr()->IsInSquelchMode())
-		cmd->buttons &= ~IN_ATTACK;
-
 	// Using joystick?
 	if( in_joystick->value )
 	{
@@ -920,10 +973,7 @@ int CL_ButtonBits( int bResetState )
 
 	if( in_attack.state & 3 )
 	{
-		if( gHUD.m_MOTD.m_bShow )
-			gHUD.m_MOTD.Reset();
-		else
-			bits |= IN_ATTACK;
+		bits |= IN_ATTACK;
 	}
 
 	if( in_duck.state & 3 )
@@ -1101,6 +1151,12 @@ void InitInput( void )
 	gEngfuncs.pfnAddCommand( "-reload", IN_ReloadUp );
 	gEngfuncs.pfnAddCommand( "+alt1", IN_Alt1Down );
 	gEngfuncs.pfnAddCommand( "-alt1", IN_Alt1Up );
+	gEngfuncs.pfnAddCommand( "+medkit", IN_MedkitDown );
+	gEngfuncs.pfnAddCommand( "-medkit", IN_MedkitUp );
+	gEngfuncs.pfnAddCommand( "+battery", IN_BatteryDown );
+	gEngfuncs.pfnAddCommand( "-battery", IN_BatteryUp );
+	gEngfuncs.pfnAddCommand( "+soin", IN_SoinDown );
+	gEngfuncs.pfnAddCommand( "-soin", IN_SoinUp );
 	gEngfuncs.pfnAddCommand( "+score", IN_ScoreDown );
 	gEngfuncs.pfnAddCommand( "-score", IN_ScoreUp );
 	gEngfuncs.pfnAddCommand( "+showscores", IN_ScoreDown );

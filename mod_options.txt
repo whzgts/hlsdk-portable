@@ -1,5 +1,5 @@
 BARNACLE_FIX_VISIBILITY=OFF # Barnacle tongue length fix
-CLIENT_WEAPONS=ON # Client local weapons prediction
+CLIENT_WEAPONS=OFF # Client local weapons prediction
 CROWBAR_IDLE_ANIM=OFF # Crowbar idle animation
 CROWBAR_DELAY_FIX=OFF # Crowbar attack delay fix
 CROWBAR_FIX_RAPID_CROWBAR=ON # Rapid crowbar fix
@@ -13,7 +13,7 @@ HD_HUD_DEFAULT=ON # Enable hud_allow_hd cvar by default (breaks HUD in some mods
 OEM_BUILD=OFF # OEM Build
 HLDEMO_BUILD=OFF # Demo Build
 
-GAMEDIR=valve # Gamedir path
+GAMEDIR=invasion # Gamedir path
 
 # keys below must match liblist.gam/gameinfo.txt
 SERVER_INSTALL_DIR=dlls # Where to put server dll

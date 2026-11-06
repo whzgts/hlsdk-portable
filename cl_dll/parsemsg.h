@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -15,9 +15,6 @@
 //
 //  parsemsg.h
 //
-#pragma once
-#if !defined(PARSEMSG_H)
-#define PARSEMSG_H
 
 #define ASSERT( x )
 
@@ -33,7 +30,6 @@ float READ_COORD( void );
 float READ_ANGLE( void );
 float READ_HIRESANGLE( void );
 
-#endif // PARSEMSG_H
 
 
 

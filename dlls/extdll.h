@@ -113,4 +113,22 @@ typedef float vec_t;				// needed before including progdefs.h
 #define Q_max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
 
-#endif //EXTDLL_H
+#endif
+
+// --- HL Invasion compatibility shims (old SDK 2.1 code expects these) ---
+#if !defined(min)
+#define min(a,b) Q_min(a,b)
+#endif
+#if !defined(max)
+#define max(a,b) Q_max(a,b)
+#endif
+#ifndef itoa
+#define itoa(a,b,c) sprintf(b, "%d", a)
+#endif
+#ifndef _strnicmp
+#define _strnicmp strncasecmp
+#endif
+#ifndef _stricmp
+#define _stricmp strcasecmp
+#endif
+ //EXTDLL_H

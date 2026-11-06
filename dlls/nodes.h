@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -15,9 +15,7 @@
 //=========================================================
 // nodes.h
 //=========================================================
-#pragma once
-#if !defined(NODES_H)
-#define NODES_H
+
 //=========================================================
 // DEFINE
 //=========================================================
@@ -90,6 +88,7 @@ public:
 	float	m_flWeight;// length of the link line segment
 };
 
+
 typedef struct
 {
 	int m_SortedBy[3];
@@ -105,15 +104,7 @@ typedef struct
 //=========================================================
 // CGraph 
 //=========================================================
-#define _GRAPH_VERSION_RETAIL 16 // Retail Half-Life graph version. Don't increment this
-#if XASH_64BIT
-#define	_GRAPH_VERSION	(16 * 10)
-#else
-#define	_GRAPH_VERSION	(16) // !!!increment this whenever graph/node/link classes change, to obsolesce older disk files.
-#endif
-#define GRAPH_VERSION (int)_GRAPH_VERSION
-#define GRAPH_VERSION_RETAIL (int)_GRAPH_VERSION_RETAIL
-
+#define	GRAPH_VERSION	(int)16// !!!increment this whever graph/node/link classes change, to obsolesce older disk files.
 class CGraph
 {
 public:
@@ -125,7 +116,7 @@ public:
 
 	CNode	*m_pNodes;// pointer to the memory block that contains all node info
 	CLink	*m_pLinkPool;// big list of all node connections
-	signed char    *m_pRouteInfo; // compressed routing information the nodes use.
+	char    *m_pRouteInfo; // compressed routing information the nodes use.
 
 	int		m_cNodes;// total number of nodes
 	int		m_cLinks;// total number of links
@@ -186,9 +177,9 @@ public:
 	void	InitGraph( void );
 	int		AllocNodes ( void );
 	
-	int		CheckNODFile(const char *szMapName);
-	int		FLoadGraph(const char *szMapName);
-	int		FSaveGraph(const char *szMapName);
+	int		CheckNODFile(char *szMapName);
+	int		FLoadGraph(char *szMapName);
+	int		FSaveGraph(char *szMapName);
 	int		FSetGraphPointers(void);
 	void	CheckNode(Vector vecOrigin, int iNode);
 
@@ -212,16 +203,11 @@ public:
 		return 0; 
 	}
 
-	void	ByteswapGraph();
-	void	ByteswapNodes();
-	void	ByteswapLinks();
-	void	ByteswapDistInfo();
-	void	ByteswapHashLinks();
 
 	inline	CNode &Node( int i )
 	{
-#if _DEBUG
-		if ( !m_pNodes || i < 0 || i >= m_cNodes )
+#ifdef _DEBUG
+		if ( !m_pNodes || i < 0 || i > m_cNodes )
 			ALERT( at_error, "Bad Node!\n" );
 #endif
 		return m_pNodes[i];
@@ -229,8 +215,8 @@ public:
 
 	inline	CLink &Link( int i )
 	{
-#if _DEBUG
-		if ( !m_pLinkPool || i < 0 || i >= m_cLinks )
+#ifdef _DEBUG
+		if ( !m_pLinkPool || i < 0 || i > m_cLinks )
 			ALERT( at_error, "Bad link!\n" );
 #endif
 		return m_pLinkPool[i];
@@ -283,6 +269,7 @@ class CNodeEnt : public CBaseEntity
 	short m_sHintActivity;
 };
 
+
 //=========================================================
 // CStack - last in, first out.
 //=========================================================
@@ -301,6 +288,7 @@ private:
 	int		m_stack[ MAX_STACK_NODES ];
 	int		m_level;
 };
+
 
 //=========================================================
 // CQueue - first in, first out.
@@ -380,8 +368,7 @@ enum
 	HINT_TACTICAL_AMBUSH,
 
 	HINT_STUKA_PERCH = 300,
-	HINT_STUKA_LANDING
+	HINT_STUKA_LANDING,
 };
 
 extern CGraph WorldGraph;
-#endif // NODES_H

@@ -62,3 +62,26 @@
 #define DRC_FLAG_SLOWEND		4	// end with speed 0.0
 
 #endif//HLTV_H
+
+// --- HL Invasion: constants the old client code expects ---
+#ifndef TYPE_DIRECTOR
+#define TYPE_DIRECTOR 2
+#endif
+#ifndef HLTV_CAMERA
+#define HLTV_CAMERA 2
+#define HLTV_EVENT 3
+#endif
+#ifndef DRCAPI_NOP
+#define DRCAPI_NOP 0
+#define DRCAPI_ACTIVE 1
+#define DRCAPI_STATUS 2
+#define DRCAPI_SETCAM 3
+#define DRCAPI_GETCAM 4
+#define DRCAPI_DIRTIME 5
+#define DRCAPI_DIRSCALE 6
+#define DRCAPI_SETVIEWMODE 7
+#define DRCAPI_SETOVERVIEWPARAMS 8
+#define DRCAPI_SETFOCUS 9
+#define DRCAPI_GETTARGETS 10
+#define DRCAPI_SETVIEWPOINTS 11
+#endif

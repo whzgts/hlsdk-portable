@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -27,6 +27,16 @@
 #define	SF_MONSTERMAKER_START_ON	1 // start active ( if has targetname )
 #define	SF_MONSTERMAKER_CYCLIC		4 // drop one monster every time fired.
 #define SF_MONSTERMAKER_MONSTERCLIP	8 // Children are blocked by monsterclip
+//=============modif de Julien
+#define SF_MONSTERMAKER_GAG				32
+#define SF_MONSTERMAKER_PRISONER		64
+#define SF_MONSTERMAKER_SQUADLEADER		128
+#define SF_MONSTERMAKER_PREDISASTER		256
+#define SF_MONSTERMAKER_WAITFORSCRIPT	512
+#define SF_MONSTERMAKER_SENTRY			1024
+#define SF_MONSTERMAKER_L3M3			2048
+#define SF_MONSTERMAKER_FLASHLIGHT		16
+//=========
 
 //=========================================================
 // MonsterMaker - this ent creates monsters during the game.
@@ -37,33 +47,43 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void KeyValue( KeyValueData* pkvd);
-	void EXPORT ToggleUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-	void EXPORT CyclicUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-	void EXPORT MakerThink( void );
-	void DeathNotice( entvars_t *pevChild );// monster maker children use this to tell the monster maker that they have died.
+	void EXPORT ToggleUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
+	void EXPORT CyclicUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
+	void EXPORT MakerThink ( void );
+	void DeathNotice ( entvars_t *pevChild );// monster maker children use this to tell the monster maker that they have died.
 	void MakeMonster( void );
 
-	virtual int Save( CSave &save );
-	virtual int Restore( CRestore &restore );
+	virtual int		Save( CSave &save );
+	virtual int		Restore( CRestore &restore );
 
-	static TYPEDESCRIPTION m_SaveData[];
+	static	TYPEDESCRIPTION m_SaveData[];
 	
 	string_t m_iszMonsterClassname;// classname of the monster(s) that will be created.
 	
-	int m_cNumMonsters;// max number of monsters this ent can create
+	int	 m_cNumMonsters;// max number of monsters this ent can create
+
 	
-	int m_cLiveChildren;// how many monsters made by this monster maker that are currently alive
-	int m_iMaxLiveChildren;// max number of monsters that this maker may have out at one time.
+	int  m_cLiveChildren;// how many monsters made by this monster maker that are currently alive
+	int	 m_iMaxLiveChildren;// max number of monsters that this maker may have out at one time.
 
 	float m_flGround; // z coord of the ground under me, used to make sure no monsters are under the maker when it drops a new child
 
 	BOOL m_fActive;
 	BOOL m_fFadeChildren;// should we make the children fadeout?
+
+	//======== modifs de Julien
+	int m_iMBody;			// permet de choisir la tête du scientist
+	int m_iMWeapon;			// et l'arme du grunt
+
+	int			m_iTriggerCondition;
+	string_t	m_iszTriggerTarget;// name of target that should be fired. 
+
+	//=================
 };
 
-LINK_ENTITY_TO_CLASS( monstermaker, CMonsterMaker )
+LINK_ENTITY_TO_CLASS( monstermaker, CMonsterMaker );
 
-TYPEDESCRIPTION	CMonsterMaker::m_SaveData[] =
+TYPEDESCRIPTION	CMonsterMaker::m_SaveData[] = 
 {
 	DEFINE_FIELD( CMonsterMaker, m_iszMonsterClassname, FIELD_STRING ),
 	DEFINE_FIELD( CMonsterMaker, m_cNumMonsters, FIELD_INTEGER ),
@@ -72,70 +92,101 @@ TYPEDESCRIPTION	CMonsterMaker::m_SaveData[] =
 	DEFINE_FIELD( CMonsterMaker, m_iMaxLiveChildren, FIELD_INTEGER ),
 	DEFINE_FIELD( CMonsterMaker, m_fActive, FIELD_BOOLEAN ),
 	DEFINE_FIELD( CMonsterMaker, m_fFadeChildren, FIELD_BOOLEAN ),
+
+	// modifs de Julien
+	DEFINE_FIELD( CMonsterMaker, m_iMBody, FIELD_INTEGER ),
+	DEFINE_FIELD( CMonsterMaker, m_iMWeapon, FIELD_INTEGER ),
+	DEFINE_FIELD( CMonsterMaker, m_iTriggerCondition, FIELD_INTEGER ),
+	DEFINE_FIELD( CMonsterMaker, m_iszTriggerTarget, FIELD_STRING ),
+
+	//=============
 };
 
-IMPLEMENT_SAVERESTORE( CMonsterMaker, CBaseMonster )
 
-void CMonsterMaker::KeyValue( KeyValueData *pkvd )
+IMPLEMENT_SAVERESTORE( CMonsterMaker, CBaseMonster );
+
+void CMonsterMaker :: KeyValue( KeyValueData *pkvd )
 {
-	if( FStrEq( pkvd->szKeyName, "monstercount" ) )
+	
+	if ( FStrEq(pkvd->szKeyName, "monstercount") )
 	{
-		m_cNumMonsters = atoi( pkvd->szValue );
+		m_cNumMonsters = atoi(pkvd->szValue);
 		pkvd->fHandled = TRUE;
 	}
-	else if( FStrEq( pkvd->szKeyName, "m_imaxlivechildren" ) )
+	else if ( FStrEq(pkvd->szKeyName, "m_imaxlivechildren") )
 	{
-		m_iMaxLiveChildren = atoi( pkvd->szValue );
+		m_iMaxLiveChildren = atoi(pkvd->szValue);
 		pkvd->fHandled = TRUE;
 	}
-	else if( FStrEq( pkvd->szKeyName, "monstertype" ) )
+	else if ( FStrEq(pkvd->szKeyName, "monstertype") )
 	{
 		m_iszMonsterClassname = ALLOC_STRING( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}
+	//===========modifs de Julien
+	else if ( FStrEq(pkvd->szKeyName, "m_imbody") )
+	{
+		m_iMBody = atoi(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if ( FStrEq(pkvd->szKeyName, "m_imweapon") )
+	{
+		m_iMWeapon = atoi(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "TriggerTarget"))
+	{
+		m_iszTriggerTarget = ALLOC_STRING( pkvd->szValue );
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "TriggerCondition") )
+	{
+		m_iTriggerCondition = atoi( pkvd->szValue );
+		pkvd->fHandled = TRUE;
+	}
+
+	//==============
 	else
 		CBaseMonster::KeyValue( pkvd );
 }
 
-void CMonsterMaker::Spawn()
+
+void CMonsterMaker :: Spawn( )
 {
 	pev->solid = SOLID_NOT;
 
 	m_cLiveChildren = 0;
 	Precache();
-	if( !FStringNull( pev->targetname ) )
+	if ( !FStringNull ( pev->targetname ) )
 	{
-		if( pev->spawnflags & SF_MONSTERMAKER_CYCLIC )
+		if ( pev->spawnflags & SF_MONSTERMAKER_CYCLIC )
 		{
-			SetUse( &CMonsterMaker::CyclicUse );// drop one monster each time we fire
+			SetUse ( &CMonsterMaker::CyclicUse );// drop one monster each time we fire
 		}
 		else
 		{
-			SetUse( &CMonsterMaker::ToggleUse );// so can be turned on/off
+			SetUse ( &CMonsterMaker::ToggleUse );// so can be turned on/off
 		}
 
-		if( FBitSet( pev->spawnflags, SF_MONSTERMAKER_START_ON ) )
-		{
-			// start making monsters as soon as monstermaker spawns
+		if ( FBitSet ( pev->spawnflags, SF_MONSTERMAKER_START_ON ) )
+		{// start making monsters as soon as monstermaker spawns
 			m_fActive = TRUE;
-			SetThink( &CMonsterMaker::MakerThink );
+			SetThink ( &CMonsterMaker::MakerThink );
 		}
 		else
-		{
-			// wait to be activated.
+		{// wait to be activated.
 			m_fActive = FALSE;
-			SetThink( &CBaseEntity::SUB_DoNothing );
+			SetThink ( &CMonsterMaker::SUB_DoNothing );
 		}
 	}
 	else
-	{
-		// no targetname, just start.
-		pev->nextthink = gpGlobals->time + m_flDelay;
-		m_fActive = TRUE;
-		SetThink( &CMonsterMaker::MakerThink );
+	{// no targetname, just start.
+			pev->nextthink = gpGlobals->time + m_flDelay;
+			m_fActive = TRUE;
+			SetThink ( &CMonsterMaker::MakerThink );
 	}
 
-	if( m_cNumMonsters == 1 )
+	if ( m_cNumMonsters == 1 )
 	{
 		m_fFadeChildren = FALSE;
 	}
@@ -147,7 +198,7 @@ void CMonsterMaker::Spawn()
 	m_flGround = 0;
 }
 
-void CMonsterMaker::Precache( void )
+void CMonsterMaker :: Precache( void )
 {
 	CBaseMonster::Precache();
 
@@ -160,20 +211,19 @@ void CMonsterMaker::Precache( void )
 void CMonsterMaker::MakeMonster( void )
 {
 	edict_t	*pent;
-	entvars_t *pevCreate;
+	entvars_t		*pevCreate;
 
-	if( m_iMaxLiveChildren > 0 && m_cLiveChildren >= m_iMaxLiveChildren )
-	{
-		// not allowed to make a new one yet. Too many live ones out right now.
+	if ( m_iMaxLiveChildren > 0 && m_cLiveChildren >= m_iMaxLiveChildren )
+	{// not allowed to make a new one yet. Too many live ones out right now.
 		return;
 	}
 
-	if( !m_flGround )
+	if ( !m_flGround )
 	{
 		// set altitude. Now that I'm activated, any breakables, etc should be out from under me. 
 		TraceResult tr;
 
-		UTIL_TraceLine( pev->origin, pev->origin - Vector( 0, 0, 2048 ), ignore_monsters, ENT( pev ), &tr );
+		UTIL_TraceLine ( pev->origin, pev->origin - Vector ( 0, 0, 2048 ), ignore_monsters, ENT(pev), &tr );
 		m_flGround = tr.vecEndPos.z;
 	}
 
@@ -183,8 +233,8 @@ void CMonsterMaker::MakeMonster( void )
 	mins.z = m_flGround;
 
 	CBaseEntity *pList[2];
-	int count = UTIL_EntitiesInBox( pList, 2, mins, maxs, FL_CLIENT | FL_MONSTER );
-	if( count )
+	int count = UTIL_EntitiesInBox( pList, 2, mins, maxs, FL_CLIENT|FL_MONSTER );
+	if ( count )
 	{
 		// don't build a stack of monsters!
 		return;
@@ -192,41 +242,118 @@ void CMonsterMaker::MakeMonster( void )
 
 	pent = CREATE_NAMED_ENTITY( m_iszMonsterClassname );
 
-	if( FNullEnt( pent ) )
+
+	if ( FNullEnt( pent ) )
 	{
 		ALERT ( at_console, "NULL Ent in MonsterMaker!\n" );
 		return;
 	}
-
+	
 	// If I have a target, fire!
-	if( !FStringNull( pev->target ) )
+	if ( !FStringNull ( pev->target ) )
 	{
 		// delay already overloaded for this entity, so can't call SUB_UseTargets()
-		FireTargets( STRING( pev->target ), this, this, USE_TOGGLE, 0 );
+		FireTargets( STRING(pev->target), this, this, USE_TOGGLE, 0 );
 	}
 
+
 	pevCreate = VARS( pent );
+
 	pevCreate->origin = pev->origin;
 	pevCreate->angles = pev->angles;
 	SetBits( pevCreate->spawnflags, SF_MONSTER_FALL_TO_GROUND );
 
+
 	// Children hit monsterclip brushes
-	if( pev->spawnflags & SF_MONSTERMAKER_MONSTERCLIP )
+	if ( pev->spawnflags & SF_MONSTERMAKER_MONSTERCLIP )
 		SetBits( pevCreate->spawnflags, SF_MONSTER_HITMONSTERCLIP );
 
+
+
+	//============
+	/* modifs de Julien  */
+	//============
+
+	if ( m_iMBody != -2 )			// sélectionne la tête du scientist
+	{
+		pevCreate->body = m_iMBody;
+	}
+	if ( m_iMWeapon != 0 )			// sélectionne l'arme du grunt
+	{
+		pevCreate->weapons = m_iMWeapon;
+	}
+	if ( FClassnameIs( pevCreate, STRING(m_iszMonsterClassname) ) && m_iMWeapon == 0 )
+	{
+		pevCreate->weapons = 1;
+	}
+
+	CBaseMonster* pCreate = ( CBaseMonster* ) CBaseEntity::Instance( pevCreate );
+	pCreate->m_iTriggerCondition = m_iTriggerCondition;
+	pCreate->m_iszTriggerTarget = m_iszTriggerTarget;
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_GAG )
+		SetBits( pevCreate->spawnflags, SF_MONSTER_GAG );
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_PRISONER )
+		SetBits( pevCreate->spawnflags, SF_MONSTER_PRISONER );
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_SQUADLEADER )
+		SetBits( pevCreate->spawnflags, 32 );				// 32 == SF_SQUADMONSTER_LEADER, inconnu ici
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_PREDISASTER )
+		SetBits( pevCreate->spawnflags, SF_MONSTER_PREDISASTER );
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_WAITFORSCRIPT )
+		SetBits( pevCreate->spawnflags, SF_MONSTER_WAIT_FOR_SCRIPT );
+
+
+
+
+
+	//=============
+	//=============
+	
 	DispatchSpawn( ENT( pevCreate ) );
 	pevCreate->owner = edict();
 
-	if( !FStringNull( pev->netname ) )
+	if ( !FStringNull( pev->netname ) )
 	{
 		// if I have a netname (overloaded), give the child monster that name as a targetname
 		pevCreate->targetname = pev->netname;
 	}
 
+	//modif de Julien
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_L3M3 )
+	{
+		CBaseMonster *pMonster = NULL;
+		pMonster = (CBaseMonster*)(CBaseEntity::Instance( pevCreate ));
+		pMonster->m_hEnemy = CBaseEntity :: Instance ( FIND_ENTITY_BY_CLASSNAME( NULL, "player" ) );
+		pMonster->SetState ( MONSTERSTATE_COMBAT );
+		
+	}
+
+	// modif de Julien
+
+	if ( pev->spawnflags & SF_MONSTERMAKER_SENTRY && FClassnameIs ( pevCreate, "monster_sentry" ) )
+	{
+		pevCreate->spawnflags |= 1024;		// SF_MONSTER_TURRET_INVINCIBLE	= 1024
+	}
+	if ( pev->spawnflags & SF_MONSTERMAKER_SENTRY && FClassnameIs ( pevCreate, "monster_human_grunt" ) )
+	{
+		pevCreate->spawnflags |= 256;		// SF_GRUNT_INVINCIBLE	= 256
+	}
+	if ( pev->spawnflags & SF_MONSTERMAKER_FLASHLIGHT && FClassnameIs ( pevCreate, "monster_human_grunt" ) )
+	{
+		pevCreate->spawnflags |= 64;		// SF_GRUNT_FLASHLIGHT	= 64
+	}
+
+
+
 	m_cLiveChildren++;// count this monster
 	m_cNumMonsters--;
 
-	if( m_cNumMonsters == 0 )
+	if ( m_cNumMonsters == 0 )
 	{
 		// Disable this forever.  Don't kill it because it still gets death notices
 		SetThink( NULL );
@@ -238,7 +365,7 @@ void CMonsterMaker::MakeMonster( void )
 // CyclicUse - drops one monster from the monstermaker
 // each time we call this.
 //=========================================================
-void CMonsterMaker::CyclicUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
+void CMonsterMaker::CyclicUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	MakeMonster();
 }
@@ -246,20 +373,20 @@ void CMonsterMaker::CyclicUse( CBaseEntity *pActivator, CBaseEntity *pCaller, US
 //=========================================================
 // ToggleUse - activates/deactivates the monster maker
 //=========================================================
-void CMonsterMaker::ToggleUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
+void CMonsterMaker :: ToggleUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	if( !ShouldToggle( useType, m_fActive ) )
+	if ( !ShouldToggle( useType, m_fActive ) )
 		return;
 
-	if( m_fActive )
+	if ( m_fActive )
 	{
 		m_fActive = FALSE;
-		SetThink( NULL );
+		SetThink ( NULL );
 	}
 	else
 	{
 		m_fActive = TRUE;
-		SetThink( &CMonsterMaker::MakerThink );
+		SetThink ( &CMonsterMaker::MakerThink );
 	}
 
 	pev->nextthink = gpGlobals->time;
@@ -268,22 +395,25 @@ void CMonsterMaker::ToggleUse( CBaseEntity *pActivator, CBaseEntity *pCaller, US
 //=========================================================
 // MakerThink - creates a new monster every so often
 //=========================================================
-void CMonsterMaker::MakerThink( void )
+void CMonsterMaker :: MakerThink ( void )
 {
 	pev->nextthink = gpGlobals->time + m_flDelay;
 
 	MakeMonster();
 }
 
+
 //=========================================================
 //=========================================================
-void CMonsterMaker::DeathNotice( entvars_t *pevChild )
+void CMonsterMaker :: DeathNotice ( entvars_t *pevChild )
 {
 	// ok, we've gotten the deathnotice from our child, now clear out its owner if we don't want it to fade.
 	m_cLiveChildren--;
 
-	if( !m_fFadeChildren )
+	if ( !m_fFadeChildren )
 	{
 		pevChild->owner = NULL;
 	}
 }
+
+

@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+*	Copyright (c) 1999, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -12,9 +12,6 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#if !defined(HEALTH_H)
-#define HEALTH_H
 
 #define DMG_IMAGE_LIFE		2	// seconds that image is up
 
@@ -26,7 +23,6 @@
 #define DMG_IMAGE_NERVE		5
 #define DMG_IMAGE_RAD		6
 #define DMG_IMAGE_SHOCK		7
-
 //tf defines
 #define DMG_IMAGE_CALTROP	8
 #define DMG_IMAGE_TRANQ		9
@@ -50,9 +46,11 @@
 #define DMG_NEVERGIB		(1 << 12)	// with this bit OR'd in, no damage type will be able to gib victims upon death
 #define DMG_ALWAYSGIB		(1 << 13)	// with this bit OR'd in, any damage type can be made to gib victims upon death.
 
+
 // time-based damage
 //mask off TF-specific stuff too
 #define DMG_TIMEBASED		(~(0xff003fff))	// mask for time-based damage
+
 
 #define DMG_DROWN			(1 << 14)	// Drowning
 #define DMG_FIRSTTIMEBASED  DMG_DROWN
@@ -80,33 +78,36 @@
 
 // TF Healing Additions for TakeHealth
 #define DMG_IGNORE_MAXHEALTH	DMG_IGNITE
-
 // TF Redefines since we never use the originals
 #define DMG_NAIL				DMG_SLASH
 #define DMG_NOT_SELF			DMG_FREEZE
 
+
 #define DMG_TRANQ				DMG_MORTAR
 #define DMG_CONCUSS				DMG_SONIC
+
+
 
 typedef struct
 {
 	float fExpire;
 	float fBaseline;
 	int	x, y;
-}DAMAGE_IMAGE;
+} DAMAGE_IMAGE;
 	
 //
 //-----------------------------------------------------
 //
-class CHudHealth : public CHudBase
+class CHudHealth: public CHudBase
 {
 public:
 	virtual int Init( void );
 	virtual int VidInit( void );
-	virtual int Draw( float fTime );
+	virtual int Draw(float fTime);
 	virtual void Reset( void );
-	int MsgFunc_Health( const char *pszName,  int iSize, void *pbuf );
-	int MsgFunc_Damage( const char *pszName,  int iSize, void *pbuf );
+	int MsgFunc_Health(const char *pszName,  int iSize, void *pbuf);
+	int MsgFunc_Medkit(const char *pszName,  int iSize, void *pbuf);	// modif de Julien
+	int MsgFunc_Damage(const char *pszName,  int iSize, void *pbuf);
 	int m_iHealth;
 	int m_HUD_dmg_bio;
 	int m_HUD_cross;
@@ -119,10 +120,21 @@ private:
 	HSPRITE m_hDamage;
 	
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
-	int m_bitsDamage;
-	int DrawPain( float fTime );
-	int DrawDamage( float fTime );
-	void CalcDamageDirection( vec3_t vecFrom );
-	void UpdateTiles( float fTime, long bits );
-};
-#endif // HEALTH_H
+	int	m_bitsDamage;
+	int DrawPain(float fTime);
+	int DrawDamage(float fTime);
+	void CalcDamageDirection(vec3_t vecFrom);
+	void UpdateTiles(float fTime, long bits);
+
+	// modif de Julien
+
+	int m_iMedkit;
+	int m_iBattery;
+
+	HSPRITE m_sprDisposition;
+	HSPRITE m_sprVie;
+	HSPRITE m_sprMedkit;
+	wrect_t m_wrcDisposition;
+	wrect_t m_wrcVie;
+	wrect_t m_wrcMedkit;
+};	

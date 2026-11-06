@@ -23,6 +23,7 @@
 #include "netadr.h"
 #include "parsemsg.h"
 
+#include "hud_servers.h"
 #include "vgui_int.h"
 #include "vgui_TeamFortressViewport.h"
 
@@ -70,8 +71,6 @@ char	DLLEXPORT HUD_PlayerMoveTexture( char *name );
 int		DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size );
 int		DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs );
 void	DLLEXPORT HUD_Frame( double time );
-void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
-void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
 int DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
 }
 
@@ -286,33 +285,7 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
-	GetClientVoiceMgr()->Frame(time);
-}
-
-/*
-==========================
-HUD_VoiceStatus
-
-Called when a player starts or stops talking.
-==========================
-*/
-
-void DLLEXPORT HUD_VoiceStatus( int entindex, qboolean bTalking )
-{
-	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, bTalking);
-}
-
-/*
-==========================
-HUD_DirectorEvent
-
-Called when a director event message was received
-==========================
-*/
-
-void DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
-{
-	 gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
+	ServersThink( time );  // HL Invasion: server browser refresh (voice chat is not used by this mod)
 }
 
 int DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )

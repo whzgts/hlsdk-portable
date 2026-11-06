@@ -1,10 +1,3 @@
-//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
-//
-// Purpose: 
-//
-// $NoKeywords: $
-//=============================================================================
-
 #include <assert.h>
 #include "hud.h"
 #include "cl_util.h"
@@ -18,12 +11,15 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <memory.h>
+#include <math.h>
 
 #include "studio_util.h"
 #include "r_studioint.h"
 
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"
+
 
 // Predicted values saved off in hl_weapons.cpp
 void Game_GetSequence( int *seq, int *gaitseq );
@@ -970,7 +966,6 @@ HUD_GetStudioModelInterface
 Export this function for the engine to use the studio renderer class to render objects.
 ====================
 */
-
 extern "C" int DLLEXPORT HUD_GetStudioModelInterface( int version, struct r_studio_interface_s **ppinterface, struct engine_studio_api_s *pstudio )
 {
 	if ( version != STUDIO_INTERFACE_VERSION )

@@ -1,4 +1,4 @@
-//=========== (C) Copyright 1996-2002 Valve, L.L.C. All rights reserved. ===========
+//=========== (C) Copyright 1999 Valve, L.L.C. All rights reserved. ===========
 //
 // The copyright to the contents herein is the property of Valve, L.L.C.
 // The contents may be used and/or copied only with the written permission of
@@ -205,7 +205,8 @@ CSchemeManager::CSchemeManager( int xRes, int yRes )
 		static const int tokenSize = 64;
 		char paramName[tokenSize], paramValue[tokenSize];
 
-		strlcpy( paramName, token, tokenSize );
+		strncpy( paramName, token, tokenSize );
+		paramName[tokenSize-1] = 0; // ensure null termination
 
 		// get the '=' character
 		pFile = gEngfuncs.COM_ParseFile( pFile, token );
@@ -224,7 +225,8 @@ CSchemeManager::CSchemeManager( int xRes, int yRes )
 
 		// get paramValue
 		pFile = gEngfuncs.COM_ParseFile( pFile, token );
-		strlcpy( paramValue, token, tokenSize );
+		strncpy( paramValue, token, tokenSize );
+		paramValue[tokenSize-1] = 0; // ensure null termination
 		
 		// is this a new scheme?
 		if ( !stricmp(paramName, "SchemeName") )
@@ -276,7 +278,8 @@ CSchemeManager::CSchemeManager( int xRes, int yRes )
 			pScheme = &tmpSchemes[currentScheme];
 			hasFgColor = hasBgColor = hasArmedFgColor = hasArmedBgColor = hasMouseDownFgColor = hasMouseDownBgColor = false;
 
-			strlcpy( pScheme->schemeName, paramValue, CScheme::SCHEME_NAME_LENGTH );
+			strncpy( pScheme->schemeName, paramValue, CScheme::SCHEME_NAME_LENGTH );
+			pScheme->schemeName[CScheme::SCHEME_NAME_LENGTH-1] = '\0'; // ensure null termination of string
 		}
 
 		if ( !pScheme )
@@ -288,7 +291,8 @@ CSchemeManager::CSchemeManager( int xRes, int yRes )
 		// pull the data out into the scheme
 		if ( !stricmp(paramName, "FontName") )
 		{
-			strlcpy( pScheme->fontName, paramValue, CScheme::FONT_NAME_LENGTH );
+			strncpy( pScheme->fontName, paramValue, CScheme::FONT_NAME_LENGTH );
+			pScheme->fontName[CScheme::FONT_NAME_LENGTH-1] = 0;
 		}
 		else if ( !stricmp(paramName, "FontSize") )
 		{
@@ -391,19 +395,7 @@ buildDefaultFont:
 
 			if(g_CV_BitmapFonts && g_CV_BitmapFonts->value)
 			{
-				int fontRes = 640;
-				if ( m_xRes >= 1600 )
-					fontRes = 1600;
-				else if ( m_xRes >= 1280 )
-					fontRes = 1280;
-				else if ( m_xRes >= 1152 )
-					fontRes = 1152;
-				else if ( m_xRes >= 1024 )
-					fontRes = 1024;
-				else if ( m_xRes >= 800 )
-					fontRes = 800;
-
-				sprintf(fontFilename, "gfx\\vgui\\fonts\\%d_%s.tga", fontRes, m_pSchemeList[i].schemeName);
+				sprintf(fontFilename, "gfx\\vgui\\fonts\\%d_%s.tga", m_xRes, m_pSchemeList[i].schemeName);
 				pFontData = gEngfuncs.COM_LoadFile( fontFilename, 5, &fontFileLength );
 				if(!pFontData)
 					gEngfuncs.Con_Printf("Missing bitmap font: %s\n", fontFilename);

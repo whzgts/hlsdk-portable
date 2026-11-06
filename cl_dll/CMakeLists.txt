@@ -57,93 +57,83 @@ if (USE_STATIC_FREEVGUI)
 endif()
 
 set (CLDLL_SOURCES
-	../dlls/crossbow.cpp
-	../dlls/crowbar.cpp
-	../dlls/egon.cpp
-	../dlls/gauss.cpp
-	../dlls/handgrenade.cpp
-	../dlls/hornetgun.cpp
-	../dlls/mp5.cpp
-	../dlls/python.cpp
-	../dlls/rpg.cpp
-	../dlls/satchel.cpp
-	../dlls/shotgun.cpp
-	../dlls/squeakgrenade.cpp
-	../dlls/tripmine.cpp
-	../dlls/glock.cpp
-	ev_hldm.cpp
-	hl/hl_baseentity.cpp
-	hl/hl_events.cpp
-	hl/hl_objects.cpp
-	hl/hl_weapons.cpp
+	../dlls/wpn_shared/hl_wpn_glock.cpp
+	../pm_shared/pm_debug.c
+	../pm_shared/pm_math.c
+	../pm_shared/pm_shared.c
+	GameStudioModelRenderer.cpp
+	StudioModelRenderer.cpp
 	ammo.cpp
 	ammo_secondary.cpp
 	ammohistory.cpp
 	battery.cpp
 	cdll_int.cpp
+	clientbriquet.cpp
+	clientfog.cpp
+	clientlflammes.cpp
 	com_weapons.cpp
 	death.cpp
 	demo.cpp
 	entity.cpp
 	ev_common.cpp
+	ev_hldm.cpp
 	events.cpp
 	flashlight.cpp
-	GameStudioModelRenderer.cpp
 	geiger.cpp
 	health.cpp
+	hl/hl_baseentity.cpp
+	hl/hl_events.cpp
+	hl/hl_objects.cpp
+	hl/hl_weapons.cpp
 	hud.cpp
 	hud_msg.cpp
 	hud_redraw.cpp
+	hud_servers.cpp
 	hud_spectator.cpp
+	hud_tank.cpp
 	hud_update.cpp
+	hudradio.cpp
+	hudrpg.cpp
+	hudzoom.cpp
 	in_camera.cpp
 	input.cpp
-	input_goldsource.cpp
-	input_mouse.cpp
-	input_xash3d.cpp
-	interpolation.cpp
+	lensflare.cpp
 	menu.cpp
 	message.cpp
-	MOTD.cpp
+	nvg.cpp
+	overview.cpp
 	parsemsg.cpp
-	../pm_shared/pm_debug.c
-	../pm_shared/pm_math.c
-	../pm_shared/pm_shared.c
+	particules.cpp
 	saytext.cpp
-	scoreboard.cpp
 	status_icons.cpp
 	statusbar.cpp
 	studio_util.cpp
-	StudioModelRenderer.cpp
 	text_message.cpp
 	train.cpp
 	tri.cpp
 	util.cpp
-	view.cpp
-	../public/safe_snprintf.c
-)
-
-list(APPEND CLDLL_SOURCES
-	vgui_int.cpp
 	vgui_ClassMenu.cpp
 	vgui_ConsolePanel.cpp
 	vgui_ControlConfigPanel.cpp
 	vgui_CustomObjects.cpp
 	vgui_MOTDWindow.cpp
+	vgui_OrdiControl.cpp
+	vgui_OrdiMenu.cpp
 	vgui_SchemeManager.cpp
 	vgui_ScorePanel.cpp
+	vgui_ServerBrowser.cpp
 	vgui_TeamFortressViewport.cpp
-	vgui_SpectatorPanel.cpp
+	vgui_int.cpp
+	vgui_keypad.cpp
+	vgui_radio.cpp
+	vgui_soin.cpp
 	vgui_teammenu.cpp
-	voice_status.cpp
-	../game_shared/vgui_checkbutton2.cpp
-	../game_shared/vgui_grid.cpp
-	../game_shared/vgui_helpers.cpp
-	../game_shared/vgui_listbox.cpp
-	../game_shared/vgui_loadtga.cpp
-	../game_shared/vgui_scrollbar2.cpp
-	../game_shared/vgui_slider2.cpp
-	../game_shared/voice_banmgr.cpp
+	view.cpp
+	input_mouse.cpp
+	input_xash3d.cpp
+	input_goldsource.cpp
+	interpolation.cpp
+	../public/safe_snprintf.c
 )
 
 if (HAVE_STRLCPY)
