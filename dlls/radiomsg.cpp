@@ -37,7 +37,7 @@ int	GetRadiomsgText ( int iszMessage )
 	sprintf ( filename, TEXT_FILE_PATH );
 
 	char messagename [62];
-	sprintf ( messagename, STRING (iszMessage) );
+	sprintf( messagename, "%s", STRING (iszMessage) );
 
 
 	FILE *myfile = fopen ( filename, "r" );
@@ -186,7 +186,7 @@ void CRadiomsg :: Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 	CBaseEntity *pPlayer = UTIL_FindEntityByClassname ( NULL,"player" );
 
 	char	txt [256];
-	sprintf ( txt, STRING(m_iszText));
+	sprintf( txt, "%s", STRING(m_iszText) );
 	int		len = strlen ( txt );
 
 

@@ -173,15 +173,15 @@ Panel* ScoreTablePanel::getCellRenderer(int column,int row,bool columnSelected,b
 		case 0:
 			if ( m_iIsATeam[row] == TEAM_UNASSIGNED )
 			{
-				sprintf( sz2, CHudTextMessage::BufferedLocaliseTextString( "#Unassigned" ) );
+				sprintf( sz2, "%s", CHudTextMessage::BufferedLocaliseTextString( "#Unassigned" ) );
 			}
 			else if ( m_iIsATeam[row] == TEAM_SPECTATORS )
 			{
-				sprintf( sz2, CHudTextMessage::BufferedLocaliseTextString( "#Spectators" ) );
+				sprintf( sz2, "%s", CHudTextMessage::BufferedLocaliseTextString( "#Spectators" ) );
 			}
 			else
 			{
-				sprintf( sz2, CHudTextMessage::BufferedLocaliseTextString( team_info->name ) );
+				sprintf( sz2, "%s", CHudTextMessage::BufferedLocaliseTextString( team_info->name ) );
 			}
 
 			// Uppercase it

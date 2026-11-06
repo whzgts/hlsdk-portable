@@ -514,7 +514,7 @@ void GetOrdiText ( const char *textname, char *messagename, Font *pRadioFont, in
 	sprintf ( filename, TEXT_FILE_PATH );
 
 //	char messagename [62];
-	sprintf ( messagename, textname );
+	sprintf( messagename, "%s", textname );
 
 
 	FILE *myfile = fopen ( filename, "r" );
@@ -596,7 +596,7 @@ void GetOrdiText ( const char *textname, char *messagename, Font *pRadioFont, in
 	char source [ORDI_STRING_LEN];
 	char dest	[ORDI_STRING_LEN];
 
-	sprintf ( source, messagetext );
+	sprintf( source, "%s", messagetext );
 	sprintf ( dest, "" );
 
 	int i;
@@ -702,7 +702,7 @@ void GetOrdiText ( const char *textname, char *messagename, Font *pRadioFont, in
 		i += lettres - 1;
 	}
 
-	sprintf ( messagename, dest );
+	sprintf( messagename, "%s", dest );
 
 	return;
 

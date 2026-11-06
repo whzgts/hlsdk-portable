@@ -88,7 +88,7 @@ int CHudRadio :: MsgFunc_RadioMsg( const char *pszName, int iSize, void *pbuf )
 		CRadio *pRadio = (CRadio*)pNewMenu;
 
 		pRadio->m_iHead = m_iHead;
-		sprintf ( pRadio->m_cText, m_cText );
+		sprintf( pRadio->m_cText, "%s", m_cText );
 		pRadio->Initialize ();
 
 		gViewPort->HideCommandMenu();
