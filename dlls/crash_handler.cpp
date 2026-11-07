@@ -15,6 +15,8 @@
 #include <time.h>
 #include <dlfcn.h>
 #include <ucontext.h>
+#include <link.h>
+#include <elf.h>
 #ifdef __ANDROID__
 #include <android/log.h>
 #endif
@@ -60,8 +62,11 @@ namespace
 #endif
 	}
 
+	void EmitBuildId(int fd, void* addr);
+
 	void Describe(int fd, const char* label, void* addr)
 	{
+		EmitBuildId(fd, addr);
 		char line[768];
 		Dl_info info;
 		memset(&info, 0, sizeof(info));
@@ -80,6 +85,51 @@ namespace
 			snprintf(line, sizeof(line), "  %-8s %p  (fora de qualquer lib / nulo)\n", label, addr);
 		}
 		Emit(fd, line);
+	}
+
+
+	// Build-id (hash unico do binario) da lib onde caiu: serve para conferir se os simbolos baixados sao do mesmo build.
+	void EmitBuildId(int fd, void* addr)
+	{
+		Dl_info info;
+		memset(&info, 0, sizeof(info));
+		if (!addr || !dladdr(addr, &info) || !info.dli_fbase || !info.dli_fname) return;
+		if (!strstr(info.dli_fname, "invasion") && !strstr(info.dli_fname, "client")) return; // so as libs do mod
+		static const void* seen[4];
+		for (int i = 0; i < 4; i++) if (seen[i] == info.dli_fbase) return; // uma vez por lib
+		for (int i = 0; i < 4; i++) if (!seen[i]) { seen[i] = info.dli_fbase; break; }
+		const char* base = (const char*)info.dli_fbase;
+		if (memcmp(base, ELFMAG, SELFMAG) != 0) return;
+#if defined(__LP64__)
+		const Elf64_Ehdr* eh = (const Elf64_Ehdr*)base;
+		const Elf64_Phdr* ph = (const Elf64_Phdr*)(base + eh->e_phoff);
+#else
+		const Elf32_Ehdr* eh = (const Elf32_Ehdr*)base;
+		const Elf32_Phdr* ph = (const Elf32_Phdr*)(base + eh->e_phoff);
+#endif
+		for (int i = 0; i < eh->e_phnum; i++)
+		{
+			if (ph[i].p_type != PT_NOTE) continue;
+			const char* p = base + ph[i].p_vaddr;
+			const char* end = p + ph[i].p_memsz;
+			while (p + 12 <= end)
+			{
+				unsigned namesz = ((const unsigned*)p)[0], descsz = ((const unsigned*)p)[1], type = ((const unsigned*)p)[2];
+				const char* name = p + 12;
+				const unsigned char* desc = (const unsigned char*)(name + ((namesz + 3) & ~3u));
+				if (type == 3 /*NT_GNU_BUILD_ID*/ && namesz == 4 && memcmp(name, "GNU", 4) == 0 && descsz <= 64)
+				{
+					char line[240];
+					snprintf(line, sizeof(line), "Build-id (%s): ", strrchr(info.dli_fname, '/') ? strrchr(info.dli_fname, '/') + 1 : info.dli_fname);
+					size_t n = strlen(line);
+					for (unsigned k = 0; k < descsz; k++) n += snprintf(line + n, sizeof(line) - n, "%02x", desc[k]);
+					snprintf(line + n, sizeof(line) - n, "\n");
+					Emit(fd, line);
+					return;
+				}
+				p = (const char*)desc + ((descsz + 3) & ~3u);
+			}
+		}
 	}
 
 	void Handler(int sig, siginfo_t* si, void* ucv)

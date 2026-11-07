@@ -202,7 +202,7 @@ else()
 			WORLD_READ WORLD_EXECUTE)
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32 AND NOT XASH_PS4)
+if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32 AND NOT XASH_PS4 AND NOT INVASION_KEEP_SYMBOLS) # CI sets INVASION_KEEP_SYMBOLS=ON and strips later
 	if(APPLE)
 		# Apple strip treats -s as a symbol list file, -x keeps exported symbols
 		set(STRIP_FLAGS -x)
