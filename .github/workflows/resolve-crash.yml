@@ -55,9 +55,12 @@ jobs:
           esac
           echo "Lib: $FILE"
           NDK="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}"
+          BID=$("$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" -n "$FILE" | grep -i 'Build ID' | awk '{print $3}')
           SYM="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-symbolizer"
           {
             echo "### Resultado ($FILE)"
+            echo "Build-id desta lib: \`$BID\`"
+            echo "Compare com a linha 'Build-id' do seu invasion_crash.log: se for DIFERENTE, o run_id esta errado (a traducao abaixo nao vale)."
             echo '```'
             for a in $ADDRS; do
               echo "== 0x${a#0x}"

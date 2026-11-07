@@ -59,7 +59,8 @@ jobs:
             -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
             -DGOLDSOURCE_SUPPORT=OFF \
-            -DCMAKE_C_FLAGS=-g1 -DCMAKE_CXX_FLAGS=-g1   # line info only in the symbols artifact (libs are stripped below)
+            -DINVASION_KEEP_SYMBOLS=ON \
+            -DCMAKE_C_FLAGS=-g1 -DCMAKE_CXX_FLAGS=-g1   # symbols/lines kept here; the workflow strips the shipped libs below
 
       - name: Build
         run: |
