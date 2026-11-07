@@ -11,6 +11,9 @@
 name: Android build
 
 on:
+  push:
+    branches: [ invasion, main, master ]
+  pull_request:
   workflow_dispatch:
     inputs:
       build_apk:
@@ -55,7 +58,8 @@ jobs:
             -DANDROID_ABI="${{ matrix.abi }}" \
             -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-            -DGOLDSOURCE_SUPPORT=OFF
+            -DGOLDSOURCE_SUPPORT=OFF \
+            -DCMAKE_C_FLAGS=-g1 -DCMAKE_CXX_FLAGS=-g1   # line info only in the symbols artifact (libs are stripped below)
 
       - name: Build
         run: cmake --build build --parallel
@@ -65,6 +69,9 @@ jobs:
           mkdir -p "out/${{ matrix.abi }}"
           # Take every .so CMake produced, whatever the target is called.
           find build -name '*.so' -not -path '*/CMakeFiles/*' -exec cp -v {} "out/${{ matrix.abi }}/" \;
+          # Keep an unstripped copy: needed to translate crash-log offsets (see resolve-crash.yml).
+          mkdir -p "symbols/${{ matrix.abi }}"
+          cp -v "out/${{ matrix.abi }}"/*.so "symbols/${{ matrix.abi }}/"
           "$NDK"/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip --strip-unneeded "out/${{ matrix.abi }}"/*.so
           ls -l "out/${{ matrix.abi }}"
           # Sanity check: the server lib must export the entry points the engine looks up.
@@ -75,6 +82,14 @@ jobs:
         with:
           name: invasion-libs-${{ matrix.abi }}
           path: out/${{ matrix.abi }}/*.so
+          if-no-files-found: error
+
+      # Unstripped libs, only used to decode invasion_crash.log offsets. Same run id as the libs above.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: invasion-symbols-${{ matrix.abi }}
+          path: symbols/${{ matrix.abi }}/*.so
+          retention-days: 30
           if-no-files-found: error
 
   apk:

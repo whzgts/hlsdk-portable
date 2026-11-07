@@ -1,0 +1,67 @@
+# .github/workflows/resolve-crash.yml
+# Traduz os enderecos de um invasion_crash.log em nomes de funcao (e linha, quando houver).
+# Uso: Actions > "Resolve crash log" > Run workflow, e preencha os campos.
+name: Resolve crash log
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Numero da execucao do 'Android build' que gerou as libs (fim da URL: .../actions/runs/NUMERO)"
+        required: true
+      abi:
+        description: "Arquitetura das libs usadas no celular"
+        type: choice
+        options: [ arm64-v8a, armeabi-v7a ]
+        default: arm64-v8a
+      lib:
+        description: "Qual lib aparece no log (nome do modulo depois do 'pc ...')"
+        type: choice
+        options: [ invasion (servidor), client (cliente) ]
+        default: invasion (servidor)
+      addresses:
+        description: "Enderecos 'pc' do log, separados por espaco (ex: 0007a3c4 0007b120)"
+        required: true
+
+# So le artifacts de execucoes deste repo.
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download symbols
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+          ABI: ${{ inputs.abi }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] || { echo "run_id invalido"; exit 1; }
+          [[ "$ABI" =~ ^(arm64-v8a|armeabi-v7a)$ ]] || { echo "abi invalida"; exit 1; }
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" -n "invasion-symbols-$ABI" -D sym
+          ls -l sym
+
+      - name: Resolve addresses
+        env:
+          LIB: ${{ inputs.lib }}
+          ADDRS: ${{ inputs.addresses }}
+        run: |
+          [[ "$ADDRS" =~ ^[0-9a-fA-FxX\ ]+$ ]] || { echo "enderecos invalidos: use so hexadecimal separado por espaco"; exit 1; }
+          case "$LIB" in
+            client*) FILE=$(ls sym/*client*.so | head -n1) ;;
+            *)       FILE=$(ls sym/*invasion*.so sym/*hl*.so 2>/dev/null | head -n1) ;;
+          esac
+          echo "Lib: $FILE"
+          NDK="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}"
+          SYM="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-symbolizer"
+          {
+            echo "### Resultado ($FILE)"
+            echo '```'
+            for a in $ADDRS; do
+              echo "== 0x${a#0x}"
+              "$SYM" --obj="$FILE" --functions --demangle --inlining "0x${a#0x}"
+            done
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
