@@ -190,6 +190,10 @@ if(MSVC)
 endif()
 
 add_library (${SVDLL_LIBRARY} SHARED ${SVDLL_SOURCES})
+
+if (ANDROID)
+	target_link_libraries(${SVDLL_LIBRARY} log) # __android_log_print (crash_handler.cpp)
+endif()
 target_link_libraries(${SVDLL_LIBRARY} vcs_info)
 
 set_target_properties (${SVDLL_LIBRARY} PROPERTIES POSITION_INDEPENDENT_CODE 1)
