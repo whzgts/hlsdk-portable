@@ -31,6 +31,7 @@ if(NOT MSVC)
 	add_compile_options(-fno-exceptions) # GCC/Clang flag
 	add_compile_options(-fno-rtti) # GCC/Clang flag
 	add_compile_options(-fvisibility=hidden) # GCC/Clang flag
+	add_compile_options(-fno-omit-frame-pointer) # crash log (invasion_crash.log) needs frame pointers
 	add_definitions(-D_LINUX -DLINUX) # It seems enough for all non-Win32 systems
 	add_definitions(-Dstricmp=strcasecmp -Dstrnicmp=strncasecmp)
 	if(NOT MINGW)
@@ -63,6 +64,7 @@ set (CLDLL_SOURCES
 	../pm_shared/pm_shared.c
 	GameStudioModelRenderer.cpp
 	StudioModelRenderer.cpp
+	../dlls/crash_handler.cpp
 	ammo.cpp
 	ammo_secondary.cpp
 	ammohistory.cpp
