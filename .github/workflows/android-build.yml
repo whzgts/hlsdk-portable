@@ -62,7 +62,30 @@ jobs:
             -DCMAKE_C_FLAGS=-g1 -DCMAKE_CXX_FLAGS=-g1   # line info only in the symbols artifact (libs are stripped below)
 
       - name: Build
-        run: cmake --build build --parallel
+        run: |
+          # Full log goes to build.log; the shell stops here if the build fails (pipefail).
+          cmake --build build --parallel 2>&1 | tee build.log
+
+      # On failure: show ONLY the real problems (not the thousands of warning lines).
+      - name: Show errors (only if the build failed)
+        if: failure()
+        run: |
+          {
+            echo "### Erros do build (${{ matrix.abi }})"
+            echo '```'
+            grep -nE "error:|undefined symbol|undefined reference|FAILED:|fatal error" build.log | grep -v "Werror=" | head -60 || true
+            echo '```'
+            echo "Log completo: baixe o artifact build-log-${{ matrix.abi }}"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          grep -E "error:|undefined symbol|fatal error" build.log | head -10 | while IFS= read -r l; do echo "::error::${l:0:300}"; done || true
+
+      - name: Upload build log (only if failed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.abi }}
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Collect and strip libraries
         run: |
